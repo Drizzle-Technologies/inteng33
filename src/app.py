@@ -1,10 +1,14 @@
-from flask import Flask, render_template, request
-from src.database.database import db
-from src.database.dao import add_device, get_max_people
-from src.helper.helper import calculate_max_people
+from flask import Flask, render_template, request, redirect, url_for
+from database.database import db
+from database.dao import add_device, get_max_people
+from database.credentials import access_credentials
+from helper.helper import calculate_max_people
 import json
 
 app = Flask(__name__, instance_relative_config=True)
+app.config['SQLALCHEMY_DATABASE_URI'] = access_credentials()
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping": True}
+
 db.init_app(app)
 
 
@@ -13,7 +17,7 @@ def index():
     return render_template("index.html")
 
 
-@app.route('/save_device')
+@app.route('/save_device', methods=["POST"])
 def save_device():
     shop_name = request.form['shop_name']
     owner = request.form['owner']
@@ -22,6 +26,8 @@ def save_device():
 
     new_device = (shop_name, owner, area, max_people)
     add_device(new_device)
+
+    return redirect(url_for('index'))
 
 
 @app.route('/controladores/<id>', methods=["POST"])

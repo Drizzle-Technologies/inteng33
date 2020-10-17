@@ -9,7 +9,7 @@
         <main>
             <article class="container-sm mt-3">
                 <h1 class="mb-5">Drizzle Technologies</h1>
-                <form action="{{ url_for('save_device') }}">
+                <form action="{{ url_for('save_device') }}" method="post">
                     <div class="input-group mb-4">
                       <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon1">Nome do Estabelecimento</span>
@@ -28,7 +28,7 @@
                       </div>
                       <input type="text" name='area' class="form-control" placeholder="área" aria-label="Área do estabelecimento" aria-describedby="basic-addon1">
                     </div>
-                    <submit class="btn btn-primary col-md-3">Enviar</submit>
+                    <button type="submit" class="btn btn-primary col-md-3">Enviar</button>
                 </form>
             </article>
         </main>
