@@ -1,2 +1,2 @@
 def calculate_max_people(area):
-    pass
+    return int(area/3)

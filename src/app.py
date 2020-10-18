@@ -11,7 +11,6 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping": True}
 
 db.init_app(app)
 
-
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -21,10 +20,10 @@ def index():
 def save_device():
     shop_name = request.form['shop_name']
     owner = request.form['owner']
-    area = request.form['area']
+    area = int(request.form['area'])
     max_people = calculate_max_people(area)
 
-    new_device = (shop_name, owner, area, max_people)
+    new_device = (owner, shop_name, area, max_people)
     add_device(new_device)
 
     return redirect(url_for('index'))
