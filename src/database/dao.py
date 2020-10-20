@@ -14,6 +14,10 @@ def add_device(values):
     db.session.commit()
 
 
-def get_max_people(ID):
+def get_devices():
+    return Device.query.all()
+
+
+def retrieve_max_people(ID):
 
     return Device.query.filter_by(ID=ID).first()
