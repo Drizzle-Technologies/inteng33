@@ -7,7 +7,7 @@ db = SQLAlchemy()
 class Device(db.Model):
 
     __tablename__ = 'tb_device'
-    ID = Column(db.Integer, primary_key=True, autoincrement=True)
+    ID = Column(db.Integer, primary_key=True)
     owner = Column(db.String(100), nullable=False)
     shop_name = Column(db.String(100), nullable=False)
     area = Column(db.Integer, nullable=False)
