@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session 
 from database.database import db
 from database.dao import add_device, delete_device, get_devices ,retrieve_max_people
 from database.credentials import access_credentials
@@ -29,6 +29,29 @@ def index():
     devices = get_devices()
 
     return render_template("index.html", devices=devices)
+
+@app.route('/login')
+def login():
+    return render_template("login.html")
+
+@app.route('/authenticate')
+def authenticate():
+    username = request.form['username']
+    password = request.form['password']
+
+    user = search_by_username(username)
+
+    if user:
+        if validate_password(user, password):
+            session["logged_in"] = user.username
+            session["user_name"] = user.name 
+
+            next_page = request.form["next_page"]
+            return redirect(next_page)
+        else:
+            return redirect(url_for("login"))
+    else:
+        return redirect(url_for("login"))
 
 
 # This route is used to save new devices on the database. It cannot be directly accessed.
@@ -79,3 +102,4 @@ def get_max_people(ID):
 if __name__ == '__main__':
 
     app.run(debug=True)
+
