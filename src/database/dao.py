@@ -13,6 +13,15 @@ def add_device(values):
     db.session.add(device)
     db.session.commit()
 
+    return True
+
+
+def delete_device(ID):
+    device = Device.query.filter_by(ID=ID).first()
+    db.session.delete(device)
+    db.session.commit()
+    return True
+
 
 def get_devices():
     return Device.query.all()
