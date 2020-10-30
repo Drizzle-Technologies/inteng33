@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session 
 from database.database import db
-from database.dao import add_device, delete_device, get_devices ,retrieve_max_people, search_by_username
+from database.dao import add_device, delete_device, get_user_devices ,retrieve_max_people, search_by_username,\
+    validate_password
 from database.credentials import access_credentials
-from helper.helper import calculate_max_people
+from helper.helper import calculate_max_people, is_not_logged_in
 import json
 
 
@@ -24,20 +25,14 @@ db.init_app(app)
 # This is our index, or home page.
 
 
-@app.route('/')
-def index():
-    devices = get_devices()
-
-    return render_template("index.html", devices=devices)
-
-
 @app.route('/login')
 def login():
     return render_template("login.html")
 
 
-@app.route('/authenticate')
+@app.route('/authenticate', methods=["POST"])
 def authenticate():
+
     username = request.form['username']
     password = request.form['password']
 
@@ -45,15 +40,37 @@ def authenticate():
 
     if user:
         if validate_password(user, password):
-            session["logged_in"] = user.username
-            session["user_name"] = user.name 
+            session["logged_in"] = user.ID
+            session["user_name"] = user.name
 
             next_page = request.form["next_page"]
+
+            # Add success login message
             return redirect(next_page)
         else:
+            # Add fail login message
             return redirect(url_for("login"))
     else:
+        # Add fail login message
         return redirect(url_for("login"))
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+
+    # Change later for index
+    return redirect(url_for('login'))
+
+
+@app.route('/dashboard')
+def dashboard():
+
+    if is_not_logged_in(session):
+        return redirect(url_for('login', next_page='dashboard'))
+    else:
+        devices = get_user_devices(session["logged_in"])
+        return render_template("dashboard.html", devices=devices)
 
 
 # This route is used to save new devices on the database. It cannot be directly accessed.
@@ -76,7 +93,7 @@ def save_device():
         flash("O dispositivo foi adicionado!", "alert-success")
 
     # And we are redirected to our index page.
-    return redirect(url_for('index'))
+    return redirect(url_for('dashboard'))
 
 
 @app.route('/delete', methods=["POST"])
@@ -86,7 +103,7 @@ def delete():
     if device_deleted:
         flash("O dispositivo foi deletado", "alert-danger")
 
-    return redirect(url_for('index'))
+    return redirect(url_for('dashboard'))
 
 
 # This route is used as an API to the devices information. A GET request is done in this URL, such as
