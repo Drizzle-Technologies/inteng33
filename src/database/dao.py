@@ -24,9 +24,9 @@ def delete_device(ID):
     return True
 
 
-def get_devices():
+def get_user_devices(ID_user):
 
-    return Device.query.all()
+    return Device.query.filter_by(ID_user=ID_user)
 
 
 def retrieve_max_people(ID):
