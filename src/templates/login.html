@@ -12,12 +12,13 @@
                 <form action="{{ url_for('authenticate') }}" method="POST" class="mt-5">
                     <div class="form-group mt-3">
                       <label for="username">Usuário</label>
-                      <input type="text" class="form-control" id="username">
+                      <input type="text" class="form-control" name="username">
                     </div>
                     <div class="form-group mt-3">
                       <label for="password">Senha</label>
-                      <input type="password" class="form-control" id="password">
+                      <input type="password" class="form-control" name="password">
                     </div>
+                    <input type="hidden" name="next_page" value="{{ next_page or url_for('dashboard') }}">
                     <button type="submit" class="btn btn-primary mt-3">Entrar</button>
                   </form>
             </div>
