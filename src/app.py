@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session 
 from database.database import db
-from database.dao import add_device, delete_device, get_devices ,retrieve_max_people
+from database.dao import add_device, delete_device, get_devices ,retrieve_max_people, search_by_username
 from database.credentials import access_credentials
 from helper.helper import calculate_max_people
 import json
@@ -30,9 +30,11 @@ def index():
 
     return render_template("index.html", devices=devices)
 
+
 @app.route('/login')
 def login():
     return render_template("login.html")
+
 
 @app.route('/authenticate')
 def authenticate():
