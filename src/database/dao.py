@@ -1,4 +1,5 @@
-from database.database import db, Device
+from database.database import db, Device, User
+from werkzeug.security import check_password_hash
 
 
 def add_device(values):
@@ -23,10 +24,22 @@ def delete_device(ID):
     return True
 
 
-def get_devices():
-    return Device.query.all()
+def get_user_devices(ID_user):
+
+    return Device.query.filter_by(ID_user=ID_user)
 
 
 def retrieve_max_people(ID):
 
     return Device.query.filter_by(ID=ID).first()
+
+
+def search_by_username(username):
+
+    return User.query.filter_by(username=username).first()
+
+
+def validate_password(user, password):
+
+    return check_password_hash(user.password, password)
+
