@@ -1,2 +1,5 @@
 venv
 .idea
+__pycache__
+database/__pycache__
+helper/__pycache__
