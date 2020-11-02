@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session 
 from database.database import db
 from database.dao import add_device, delete_device, get_user_devices ,retrieve_max_people, search_by_username,\
-    validate_password
+    validate_password, update_area
 from database.credentials import access_credentials
 from helper.helper import calculate_max_people, is_not_logged_in
 import json
@@ -45,13 +45,13 @@ def authenticate():
 
             next_page = request.form["next_page"]
 
-            # Add success login message
+            flash(f"{user.name} fez login", "alert-success")
             return redirect(next_page)
         else:
-            # Add fail login message
+            flash("Senha incorreta. Tente novamente.", "alert-danger")
             return redirect(url_for("login"))
     else:
-        # Add fail login message
+        flash("Usuário não existe. Tente novamente.", "alert-danger")
         return redirect(url_for("login"))
 
 
@@ -70,7 +70,7 @@ def dashboard():
         return redirect(url_for('login', next_page='dashboard'))
     else:
         devices = get_user_devices(session["logged_in"])
-        return render_template("dashboard.html", devices=devices)
+        return render_template("dashboard.html", devices=devices, user_name=session["user_name"])
 
 
 # This route is used to save new devices on the database. It cannot be directly accessed.
@@ -98,7 +98,7 @@ def save_device():
 
 @app.route('/delete', methods=["POST"])
 def delete():
-    ID = request.form['device_ID']
+    ID = request.form['device_ID_delete']
     device_deleted = delete_device(ID)
     if device_deleted:
         flash("O dispositivo foi deletado", "alert-danger")
@@ -116,6 +116,20 @@ def get_max_people(ID):
     max_poeple_json = json.dumps(max_dict)
 
     return max_poeple_json
+
+
+@app.route('/edit-area', methods=["POST"])
+def edit_area():
+
+    ID = request.form["device_ID_editArea"]
+    new_area = int(request.form["new_area"])
+
+    update_success = update_area(ID, new_area)
+
+    if update_success:
+        flash("O valor da área foi atualizado.", "alert-success")
+
+    return redirect(url_for('dashboard'))
 
 
 if __name__ == '__main__':
