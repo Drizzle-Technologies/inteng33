@@ -72,6 +72,13 @@ def dashboard():
         devices = get_user_devices(session["logged_in"])
         return render_template("dashboard.html", devices=devices, user_name=session["user_name"])
 
+@app.route('/create_user', methods=['POST'])
+def create_user():
+
+    username = request.form['new_username']
+    password = request.form['new_password']
+    name = request.form['new_name']
+
 
 # This route is used to save new devices on the database. It cannot be directly accessed.
 
