@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session 
 from database.database import db
-from database.dao import add_device, delete_device, get_user_devices ,retrieve_max_people, search_by_username,\
-    validate_password, update_area
+from database.dao import add_device, delete_device, add_user, get_user_devices ,retrieve_max_people,\
+                         search_by_username, validate_password, update_area
 from database.credentials import access_credentials
 from helper.helper import calculate_max_people, is_not_logged_in
 import json
@@ -70,14 +70,22 @@ def dashboard():
         return redirect(url_for('login', next_page='dashboard'))
     else:
         devices = get_user_devices(session["logged_in"])
-        return render_template("dashboard.html", devices=devices, user_name=session["user_name"])
+        return render_template("dashboard.html", devices=devices, user_name=session["user_name"],
+                               user_id=session["logged_in"])
+
 
 @app.route('/create_user', methods=['POST'])
 def create_user():
 
+    name = request.form['new_name']
     username = request.form['new_username']
     password = request.form['new_password']
-    name = request.form['new_name']
+
+    values = (name, username, password)
+
+    add_user(values)
+
+    return redirect(url_for('dashboard'))
 
 
 # This route is used to save new devices on the database. It cannot be directly accessed.
