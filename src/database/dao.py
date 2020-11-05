@@ -32,13 +32,13 @@ def add_user(values):
 
 def add_device(values):
 
-    owner, shop_name, area, max_people = values
+    ID_user, shop_name, area, max_people = values
 
     ids = [device_id.ID for device_id in Device.query.all()]
     ids.sort()
     last_id = ids[-1]
 
-    device = Device(ID=last_id+1, owner=owner, shop_name=shop_name, area=area, max_people=max_people)
+    device = Device(ID=last_id+1, ID_user=ID_user, shop_name=shop_name, area=area, max_people=max_people)
     db.session.add(device)
     db.session.commit()
 
