@@ -32,7 +32,7 @@
                 </div>
                 <div>
                   <h3>{{ user_name }}</h3>
-                  {% if username == "admin" %}
+                  {% if user_id == 1 %}
                     <button class="btn btn-primary btn-standard" data-toggle="modal" data-target="#createUser">Criar usuário</button>
                     <article class="modal fade" tabindex="-1" method="POST" id="createUser" aria-labelledby="createUserLabel" aria-hidden="true">
                       <div class="modal-dialog">
@@ -51,7 +51,7 @@
                                 </div>
                                 <input type="text" class="form-control" name="new_name" placeholder="nome">
                               </div>
-                              <div class="input-group">
+                              <div class="input-group mt-3">
                                 <div class="input-group-prepend">
                                   <span class="input-group-text" id="basic-addon1" for="new_username">Novo usuário</span>
                                 </div>
