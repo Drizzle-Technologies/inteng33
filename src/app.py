@@ -94,13 +94,13 @@ def create_user():
 def save_device():
 
     # Each form input is saved in a different variable.
+    ID_user = session["logged_in"]
     shop_name = request.form['shop_name']
-    owner = request.form['owner']
     area = int(request.form['area'])
     max_people = calculate_max_people(area)
 
     # We then form a tuple, which is roughly an immutable vector.
-    new_device = (owner, shop_name, area, max_people)
+    new_device = (ID_user, shop_name, area, max_people)
 
     # Finally we add the device to the database
     device_added = add_device(new_device)
