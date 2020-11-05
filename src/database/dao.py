@@ -1,6 +1,6 @@
 from database.database import db, Device, User
 from helper.helper import calculate_max_people
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 def search_by_username(username):
@@ -12,14 +12,23 @@ def validate_password(user, password):
 
     return check_password_hash(user.password, password)
 
+
 def add_user(values):
 
     name, username, password = values
-    user = User(name, username, password)
+
+    password_hash = generate_password_hash(password)
+
+    ids = [users.ID for users in User.query.all()]
+    ids.sort()
+    last_id = ids[-1]
+
+    user = User(ID=last_id+1, name=name, username=username, password=password_hash)
     db.session.add(user)
     db.session.commit()
     
     return True
+
 
 def add_device(values):
 
