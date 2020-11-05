@@ -1,5 +1,33 @@
 from database.database import db, Device, User
-from werkzeug.security import check_password_hash
+from helper.helper import calculate_max_people
+from werkzeug.security import check_password_hash, generate_password_hash
+
+
+def search_by_username(username):
+
+    return User.query.filter_by(username=username).first()
+
+
+def validate_password(user, password):
+
+    return check_password_hash(user.password, password)
+
+
+def add_user(values):
+
+    name, username, password = values
+
+    password_hash = generate_password_hash(password)
+
+    ids = [users.ID for users in User.query.all()]
+    ids.sort()
+    last_id = ids[-1]
+
+    user = User(ID=last_id+1, name=name, username=username, password=password_hash)
+    db.session.add(user)
+    db.session.commit()
+    
+    return True
 
 
 def add_device(values):
@@ -34,12 +62,20 @@ def retrieve_max_people(ID):
     return Device.query.filter_by(ID=ID).first()
 
 
-def search_by_username(username):
+def update_max_people(device, area):
+    new_max_people = calculate_max_people(area)
+    device.max_people = new_max_people
 
-    return User.query.filter_by(username=username).first()
+    return True
 
 
-def validate_password(user, password):
+def update_area(ID, new_area):
+    device = Device.query.filter_by(ID=ID).first()
+    device.area = new_area
 
-    return check_password_hash(user.password, password)
+    has_succeded = update_max_people(device, device.area)
+
+    db.session.commit()
+
+    return True and has_succeded
 

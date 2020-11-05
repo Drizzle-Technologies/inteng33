@@ -1,0 +1,14 @@
+.alert{
+    list-style: none;
+    
+}
+
+.standard-color{
+    color: #7952b3 !important;
+}
+
+.btn-standard{
+    background-color: #7952b3 !important;
+    outline: none;
+    border: 0;
+}
