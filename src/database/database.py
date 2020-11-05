@@ -22,4 +22,3 @@ class User(db.Model):
     name = Column(db.String(100), nullable=False)
     username = Column(db.String(255), nullable=False)
     password = Column(db.String(100), nullable=False)
-    
