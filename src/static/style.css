@@ -1,14 +1,49 @@
 .alert{
     list-style: none;
-    
+    margin-bottom: 0;
 }
 
 .standard-color{
     color: #7952b3 !important;
 }
 
+.nav-title{
+    font-size: 1rem;
+    font-weight: 800;
+}
+
 .btn-standard{
     background-color: #7952b3 !important;
     outline: none;
     border: 0;
+}
+
+.standard-background{
+    background-color: #7952b3 !important;
+}
+
+.index-footer{
+
+	height: 100%;
+	position: relative;
+	margin: 0 auto;
+	width: 82.3%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+
+}
+
+.footer-links a{
+
+    text-decoration: none;
+    color: #FEFEFE;
+    font-weight: 200;
+    font-size: 0.8rem;
+
+}
+
+.min-height-dash-main{
+    min-height: 600px;
 }

@@ -1,6 +1,7 @@
-from database.database import db, Device, User
-from helper.helper import calculate_max_people
+from .database import db, Device, User, DevicesOccupancy
+from ..helper.helper import calculate_max_people
 from werkzeug.security import check_password_hash, generate_password_hash
+import secrets
 
 
 def search_by_username(username):
@@ -30,6 +31,11 @@ def add_user(values):
     return True
 
 
+def get_devices():
+
+    return Device.query, db.session.bind
+
+
 def add_device(values):
 
     ID_user, shop_name, area, max_people = values
@@ -50,6 +56,11 @@ def delete_device(ID):
     db.session.delete(device)
     db.session.commit()
     return True
+
+
+def get_ID_devices():
+
+    return Device.query.with_entities(Device.ID).distinct(), db.session.bind
 
 
 def get_user_devices(ID_user):
@@ -79,3 +90,28 @@ def update_area(ID, new_area):
 
     return True and has_succeded
 
+
+def insert_occupancy(values):
+
+    ID = secrets.token_hex(nbytes=16)
+    ID_device, timestamp, occupancy = values
+
+    devices_occupancy = DevicesOccupancy(ID=ID, ID_device=ID_device, timestamp=timestamp, occupancy=occupancy)
+
+    db.session.add(devices_occupancy)
+    db.session.commit()
+
+
+def retrieve_n_occupancy_observations(ID_device, n):
+
+    return DevicesOccupancy.query.filter_by(ID_device=ID_device).limit(n), db.session.bind
+
+
+def update_current_occupancy(values):
+
+    ID, current_occupancy = values
+
+    device = Device.query.filter_by(ID=ID).first()
+    device.current_occupancy = current_occupancy
+
+    db.session.commit()

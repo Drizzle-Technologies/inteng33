@@ -1,22 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session 
-from database.database import db
-from database.dao import add_device, delete_device, add_user, get_user_devices ,retrieve_max_people,\
-                         search_by_username, validate_password, update_area
-from database.credentials import access_credentials
-from helper.helper import calculate_max_people, is_not_logged_in
+from flask import render_template, request, redirect, url_for, flash, session, jsonify
+from flask import current_app as app
 import json
 
+from .database.dao import add_device, delete_device, add_user, get_user_devices ,retrieve_max_people,\
+                         search_by_username, validate_password, update_area, insert_occupancy, update_current_occupancy
 
-# Instanciating Flask class. It will allow us to start our webapp.
-app = Flask(__name__, instance_relative_config=True)
-
-# We need the database URI to access the Arduino data in Postgres. This function gets the enviroment variable.
-app.config['SQLALCHEMY_DATABASE_URI'] = access_credentials()
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping": True}
-app.config['SECRET_KEY'] = 'mandalorian'
-
-# Database connected to the app
-db.init_app(app)
+from .helper.helper import calculate_max_people, is_not_logged_in
 
 
 # This is how Flask routes work. The app.route decorator sets a route to our site. For example: imagine our app is
@@ -60,7 +49,7 @@ def logout():
     session.clear()
 
     # Change later for index
-    return redirect(url_for('login'))
+    return redirect('/')
 
 
 @app.route('/dashboard')
@@ -147,7 +136,20 @@ def edit_area():
     return redirect(url_for('dashboard'))
 
 
-if __name__ == '__main__':
+@app.route('/add_occupancy', methods=["POST"])
+def add_occupancy():
+    occupancy_json = request.get_json()
 
-    app.run(debug=True)
+    ID_device = occupancy_json['id']
+    timestamp = occupancy_json['timestamp']
+    occupancy = occupancy_json['occupancy']
+
+    insert_values = (ID_device, timestamp, occupancy)
+    update_values = (ID_device, occupancy)
+
+    insert_occupancy(insert_values)
+    update_current_occupancy(update_values)
+
+    return jsonify(occupancy_json)
+
 

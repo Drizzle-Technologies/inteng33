@@ -1,6 +1,5 @@
 from sqlalchemy import Column, ForeignKey
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import relationship
 
 db = SQLAlchemy()
 
@@ -13,6 +12,7 @@ class Device(db.Model):
     shop_name = Column(db.String(100), nullable=False)
     area = Column(db.Integer, nullable=False)
     max_people = Column(db.Integer, nullable=False)
+    current_occupancy = Column(db.Integer, nullable=True)
 
 
 class User(db.Model):
@@ -22,3 +22,12 @@ class User(db.Model):
     name = Column(db.String(100), nullable=False)
     username = Column(db.String(255), nullable=False)
     password = Column(db.String(100), nullable=False)
+
+
+class DevicesOccupancy(db.Model):
+
+    __tablename__ = 'tb_devices_occupancy'
+    ID = Column(db.String, primary_key=True, nullable=False)
+    ID_device = Column(db.Integer, nullable=False)
+    timestamp = Column(db.TIMESTAMP, nullable=False)
+    occupancy = Column(db.Integer, nullable=False)
