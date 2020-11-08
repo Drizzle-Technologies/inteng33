@@ -18,7 +18,8 @@ def init_dashboard(server):
     dash_app = dash.Dash(
         server=server,
         routes_pathname_prefix='/',
-        update_title=None
+        update_title=None,
+        assets_folder='static'
     )
 
     # Custom HTML layout
