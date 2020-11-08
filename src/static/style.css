@@ -43,3 +43,7 @@
     font-size: 0.8rem;
 
 }
+
+.min-height-dash-main{
+    min-height: 600px;
+}
