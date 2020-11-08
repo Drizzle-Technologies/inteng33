@@ -20,7 +20,7 @@ html_layout = '''
         <div class='container'>
           <a class="navbar-brand" href="#"
             >
-            <h1 class="nav-title">
+            <h1 class="mb-0 nav-title">
               Drizzle Technologies
             </h1>
           </a
@@ -46,7 +46,7 @@ html_layout = '''
         </div>
       </nav>
     </header>
-    <main class="container mt-5">
+    <main class="container mt-5 min-height-dash-main">
         {%app_entry%}
     </main>
     <footer class="d-flex align-items-center navbar-dark standard-background mt-5">
