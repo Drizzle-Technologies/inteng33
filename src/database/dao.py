@@ -2,6 +2,7 @@ from .database import db, Device, User, DevicesOccupancy
 from ..helper.helper import calculate_max_people
 from werkzeug.security import check_password_hash, generate_password_hash
 import secrets
+import datetime
 
 
 def search_by_username(username):
@@ -21,13 +22,15 @@ def add_user(values):
     password_hash = generate_password_hash(password)
 
     ids = [users.ID for users in User.query.all()]
+    if not ids:
+        ids = [0]
     ids.sort()
     last_id = ids[-1]
 
     user = User(ID=last_id+1, name=name, username=username, password=password_hash)
     db.session.add(user)
     db.session.commit()
-    
+
     return True
 
 
@@ -41,6 +44,8 @@ def add_device(values):
     ID_user, shop_name, area, max_people = values
 
     ids = [device_id.ID for device_id in Device.query.all()]
+    if not ids:
+        ids = [0]
     ids.sort()
     last_id = ids[-1]
 
@@ -81,6 +86,7 @@ def update_max_people(device, area):
 
 
 def update_area(ID, new_area):
+
     device = Device.query.filter_by(ID=ID).first()
     device.area = new_area
 
@@ -95,6 +101,8 @@ def insert_occupancy(values):
 
     ID = secrets.token_hex(nbytes=16)
     ID_device, timestamp, occupancy = values
+
+    timestamp = datetime.datetime.fromisoformat(timestamp)
 
     devices_occupancy = DevicesOccupancy(ID=ID, ID_device=ID_device, timestamp=timestamp, occupancy=occupancy)
 
