@@ -1,6 +1,5 @@
 from flask import render_template, request, redirect, url_for, flash, session, jsonify
 from flask import current_app as app
-import json
 
 from .database.dao import add_device, delete_device, add_user, get_user_devices ,retrieve_max_people,\
                          search_by_username, validate_password, update_area, insert_occupancy, update_current_occupancy
@@ -11,53 +10,68 @@ from .helper.helper import calculate_max_people, is_not_logged_in
 # This is how Flask routes work. The app.route decorator sets a route to our site. For example: imagine our app is
 # google.com. We can add a route "/images" (google.com/images) to create a new page for image search.
 
-# This is our index, or home page.
-
-
 @app.route('/login')
 def login():
+    """Login page"""
     return render_template("login.html")
 
 
 @app.route('/authenticate', methods=["POST"])
 def authenticate():
+    """This route authenticates the information inserted in the login page."""
 
+    # Getting username and password from form
     username = request.form['username']
     password = request.form['password']
 
+    # Searching user object by the username
     user = search_by_username(username)
 
+    # If the user exists
     if user:
+        # Checking password
         if validate_password(user, password):
+
+            # Creating session for the user.
             session["logged_in"] = user.ID
             session["user_name"] = user.name
 
+            # Which should be the next page to be redirected?
             next_page = request.form["next_page"]
 
+            # Flash success login message
             flash(f"{user.name} fez login", "alert-success")
             return redirect(next_page)
         else:
+            # Password is wrong. Flash 'incorrect password' message
             flash("Senha incorreta. Tente novamente.", "alert-danger")
             return redirect(url_for("login"))
     else:
-        flash("Usuário não existe. Tente novamente.", "alert-danger")
+        # User does not exist. Flashing 'user does not exist' message
+        flash("Usuario nao existe. Tente novamente.", "alert-danger")
         return redirect(url_for("login"))
 
 
 @app.route('/logout')
 def logout():
+    # Clearing session
     session.clear()
-
-    # Change later for index
     return redirect('/')
 
 
 @app.route('/dashboard')
 def dashboard():
+    """This route displays the user's dashboard with a form to add new devices and a table showing all of the user's
+    devices."""
 
+    # Can't access if not logged in
     if is_not_logged_in(session):
+        # Redirected to login with next_page being the dashboard
         return redirect(url_for('login', next_page='dashboard'))
     else:
+        # User is logged in, so he can access the dashboard
+
+        # Gets user's devices list to display on table
         devices = get_user_devices(session["logged_in"])
         return render_template("dashboard.html", devices=devices, user_name=session["user_name"],
                                user_id=session["logged_in"])
@@ -65,22 +79,27 @@ def dashboard():
 
 @app.route('/create_user', methods=['POST'])
 def create_user():
+    """This route creates a new user."""
 
+    # Gets name, username, and password assigned to new user
     name = request.form['new_name']
     username = request.form['new_username']
     password = request.form['new_password']
 
     values = (name, username, password)
 
-    add_user(values)
+    success = add_user(values)
+
+    # Flashes success message
+    if success:
+        flash("Usuário foi criado.", "alert-success")
 
     return redirect(url_for('dashboard'))
 
 
-# This route is used to save new devices on the database. It cannot be directly accessed.
-
 @app.route('/save_device', methods=["POST"])
 def save_device():
+    """This route is used to save new devices on the database. It cannot be directly accessed."""
 
     # Each form input is saved in a different variable.
     ID_user = session["logged_in"]
@@ -100,32 +119,12 @@ def save_device():
     return redirect(url_for('dashboard'))
 
 
-@app.route('/delete', methods=["POST"])
-def delete():
-    ID = request.form['device_ID_delete']
-    device_deleted = delete_device(ID)
-    if device_deleted:
-        flash("O dispositivo foi deletado", "alert-danger")
-
-    return redirect(url_for('dashboard'))
-
-
-# This route is used as an API to the devices information. A GET request is done in this URL, such as
-# (localhost/controladores/1) and it retrieves the maximum capacity of the building.
-
-@app.route('/controladores/<ID>')
-def get_max_people(ID):
-    max_people = retrieve_max_people(ID).max_people
-    max_dict = {'max_people': max_people}
-    max_poeple_json = json.dumps(max_dict)
-
-    return max_poeple_json
-
-
-@app.route('/edit-area', methods=["POST"])
+@app.route('/edit_area', methods=["POST"])
 def edit_area():
+    """This route is used to edit a device's area"""
 
-    ID = request.form["device_ID_editArea"]
+    # Get device's ID and new area
+    ID = int(request.form["device_ID_editArea"])
     new_area = int(request.form["new_area"])
 
     update_success = update_area(ID, new_area)
@@ -136,20 +135,54 @@ def edit_area():
     return redirect(url_for('dashboard'))
 
 
+@app.route('/delete', methods=["POST"])
+def delete():
+    """This route is used to delete a device"""
+
+    # Gets device's ID
+    ID = request.form['device_ID_delete']
+
+    device_deleted = delete_device(ID)
+    if device_deleted:
+        flash("O dispositivo foi deletado", "alert-danger")
+
+    return redirect(url_for('dashboard'))
+
+
+@app.route('/controladores/<ID>')
+def get_max_people(ID):
+    """This route is used as an API to the devices information. A GET request is done in this URL, such as
+    localhost/controladores/1) and it retrieves the maximum capacity of the building."""
+
+    # Gets device's max number of people
+    max_people = retrieve_max_people(ID).max_people
+    max_dict = {'max_people': max_people}
+
+    # Transforms dictionary into json and sends it
+    return jsonify(max_dict)
+
+
 @app.route('/add_occupancy', methods=["POST"])
 def add_occupancy():
+    """This route adds a new occupancy record to the DeviceOccupancy table and updates current_occupancy in the Device
+    table."""
+
+    # Gets the json
     occupancy_json = request.get_json()
 
+    # Accesses each of the information provided
     ID_device = occupancy_json['id']
     timestamp = occupancy_json['timestamp']
     occupancy = occupancy_json['occupancy']
 
+    # Inserts values in DeviceOccupancy and updates Device's current_occupancy column
     insert_values = (ID_device, timestamp, occupancy)
     update_values = (ID_device, occupancy)
 
     insert_occupancy(insert_values)
     update_current_occupancy(update_values)
 
+    # Returns the json to confirm the success
     return jsonify(occupancy_json)
 
 
