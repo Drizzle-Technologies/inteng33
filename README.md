@@ -36,7 +36,7 @@ The routes */get_max_people/<ID>* and /add_occupancy exchange data between an Ar
 and the webapp. The first route gets the max number of people that can stay in the building. The second
 route receives the number of people that are in the building.
 
-##Other routes
+## Other routes
 
 - /login, /authenticate, /logout deal with user login.
 - /save_device, /edit_area, /delete deal with devices management
