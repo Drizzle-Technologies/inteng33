@@ -35,4 +35,4 @@ jobs:
       env:
         APP_SETTINGS: config.DevelopmentConfig
       run: |
-        python -m unittest test.AppTestCase
+        python -m unittest tests.test.AppTestCase
