@@ -6,7 +6,6 @@ from .database.database import db
 
 def init_app():
     """Construct core Flask application with embedded Dash app."""
-    print(os.environ['APP_SETTINGS'])
     # Instanciating Flask class. It will allow us to start our webapp.
     app = Flask(__name__, instance_relative_config=False)
 
@@ -17,6 +16,8 @@ def init_app():
     db.init_app(app)
 
     with app.app_context():
+        db.create_all()
+
         # Import parts of our core Flask app
         from . import routes
 
