@@ -33,6 +33,6 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with unittest
       env:
-        APP_SETTINGS: config.DevelopmentConfig
+        APP_SETTINGS: config.TestConfig
       run: |
         python -m unittest tests.test.AppTestCase
