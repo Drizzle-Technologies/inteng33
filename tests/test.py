@@ -15,15 +15,17 @@ class BaseTestCase(TestCase):
         return app
 
     def setUp(self):
-        db.create_all()
+
         add_user(("test", "test", "test123"))
         add_user(("admin", "admin", "admin123"))
         add_device((1, 'test_shop', 100, 120))
         insert_occupancy((1, datetime.now().isoformat(), 3))
 
     def tearDown(self):
-        db.session.remove()
-        db.drop_all()
+        meta = db.metadata
+        for table in reversed(meta.sorted_tables):
+            db.session.execute(table.delete())
+        db.session.commit()
 
 
 class AppTestCase(BaseTestCase):
