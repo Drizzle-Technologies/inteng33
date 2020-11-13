@@ -18,9 +18,15 @@ class TestConfig(BaseConfig):
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    try:
+        SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    except KeyError as e:
+        SQLALCHEMY_DATABASE_URI = ''
 
 
 class ProductionConfig(BaseConfig):
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    try:
+        SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    except KeyError as e:
+        SQLALCHEMY_DATABASE_URI = ''
