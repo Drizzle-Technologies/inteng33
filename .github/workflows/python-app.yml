@@ -34,6 +34,5 @@ jobs:
     - name: Test with unittest
       env:
         APP_SETTINGS: config.TestConfig
-        DATABASE_URL: no_database
       run: |
         python -m unittest tests.test.AppTestCase
