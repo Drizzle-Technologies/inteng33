@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect, url_for, flash, session, jsonify
 from flask import current_app as app
+import datetime
 
 from .database.dao import add_device, delete_device, add_user, get_user_devices ,retrieve_max_people,\
                          search_by_username, validate_password, update_area, insert_occupancy, update_current_occupancy
@@ -149,7 +150,7 @@ def delete():
     return redirect(url_for('dashboard'))
 
 
-@app.route('/controladores/<ID>')
+@app.route('/get_max_people/<ID>')
 def get_max_people(ID):
     """This route is used as an API to the devices information. A GET request is done in this URL, such as
     localhost/controladores/1) and it retrieves the maximum capacity of the building."""
@@ -172,8 +173,8 @@ def add_occupancy():
 
     # Accesses each of the information provided
     ID_device = occupancy_json['id']
-    timestamp = occupancy_json['timestamp']
     occupancy = occupancy_json['occupancy']
+    timestamp = datetime.datetime.now().isoformat()
 
     # Inserts values in DeviceOccupancy and updates Device's current_occupancy column
     insert_values = (ID_device, timestamp, occupancy)
