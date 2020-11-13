@@ -98,12 +98,12 @@ class AppTestCase(BaseTestCase):
         self.assertIn(b'O dispositivo foi deletado', response.data)
 
     def test_get_max_people(self):
-        response = self.client.get('/controladores/1')
+        response = self.client.get('/get_max_people/1')
         max_people = response.json['max_people']
         self.assertEqual(max_people, 120)
 
     def test_add_occupancy(self):
-        data = {'id': 1, 'timestamp': datetime.now().isoformat(), 'occupancy': 5}
+        data = {'id': 1, 'occupancy': 5}
         response = self.client.post('/add_occupancy',
                                     data=json.dumps(data),
                                     content_type='application/json')
