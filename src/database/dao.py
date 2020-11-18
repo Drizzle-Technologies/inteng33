@@ -108,9 +108,10 @@ def insert_occupancy(values):
     db.session.commit()
 
 
-def retrieve_n_occupancy_observations(ID_device, n):
+def retrieve_n_occupancy_observations(ID_device):
 
-    return DevicesOccupancy.query.filter_by(ID_device=ID_device).limit(n), db.session.bind
+    return DevicesOccupancy.query.filter_by(ID_device=ID_device).order_by(DevicesOccupancy.timestamp.desc()).limit(100),\
+           db.session.bind
 
 
 def update_current_occupancy(values):

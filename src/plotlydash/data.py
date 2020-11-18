@@ -1,4 +1,5 @@
 import pandas as pd
+from datetime import datetime
 
 from ..database.dao import get_devices, get_ID_devices, retrieve_n_occupancy_observations
 
@@ -30,11 +31,19 @@ def set_table_columns(df):
     return [{"name": i, "id": i} for i in columns]
 
 
+def create_occupancy_dataframe(ID_device, n_lines):
 
-
-def create_occupancy_dataframe(ID_device):
-
-    occupancy_sql, bind = retrieve_n_occupancy_observations(ID_device, 100)
+    occupancy_sql, bind = retrieve_n_occupancy_observations(ID_device)
     occupancy_record = pd.read_sql(occupancy_sql.statement, bind)
+
+    n_lines = n_lines or 25
+
+    if not occupancy_record.empty:
+
+        occupancy_record["timestamp"] = occupancy_record["timestamp"].apply(lambda x: datetime.strptime(x, "%Y-%m-%dT%H:%M:%S.%f%z"))
+        occupancy_record.sort_values('timestamp', ignore_index=True, inplace=True)
+
+        if n_lines != 100:
+            occupancy_record = occupancy_record.tail(n_lines)
 
     return occupancy_record
