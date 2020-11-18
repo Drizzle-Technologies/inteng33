@@ -114,11 +114,12 @@ def init_dashboard(server):
     )
     def update_graph(ID_device, n_lines, n):
         occupancy_record = create_occupancy_dataframe(ID_device, n_lines=n_lines)
+        fig = go.Figure()
 
         if ID_device:
-            fig = px.line(occupancy_record, x='timestamp', y='occupancy', line_shape="spline")
-        else:
-            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=occupancy_record["timestamp"], y=occupancy_record["occupancy"],
+                                     mode='lines+markers',
+                                     name='lines+markers',))
 
         fig.update_layout(xaxis_title='Data e Hora', yaxis_title=f'Número de pessoas',
                           title=dict(text='Ocupação do estabelecimento', x=0.5, font={'size': 15}))
