@@ -29,5 +29,5 @@ class DevicesOccupancy(db.Model):
     __tablename__ = 'tb_devices_occupancy'
     ID = Column(db.String, primary_key=True, nullable=False)
     ID_device = Column(db.Integer, nullable=False)
-    timestamp = Column(db.TIMESTAMP, nullable=False)
+    timestamp = Column(db.String, nullable=False)
     occupancy = Column(db.Integer, nullable=False)

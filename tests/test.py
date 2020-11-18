@@ -19,7 +19,7 @@ class BaseTestCase(TestCase):
         add_user(("test", "test", "test123"))
         add_user(("admin", "admin", "admin123"))
         add_device((1, 'test_shop', 100, 120))
-        insert_occupancy((1, datetime.now().isoformat(), 3))
+        insert_occupancy((1, datetime.now(), 3))
 
     def tearDown(self):
         meta = db.metadata
