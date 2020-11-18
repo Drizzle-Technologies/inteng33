@@ -40,7 +40,7 @@ def create_occupancy_dataframe(ID_device, n_lines):
 
     if not occupancy_record.empty:
 
-        occupancy_record["timestamp"] = occupancy_record["timestamp"].apply(lambda x: datetime.strptime(x, "%Y-%m-%dT%H:%M:%S.%f%z"))
+        occupancy_record["timestamp"] = occupancy_record["timestamp"].apply(lambda x: datetime.fromisoformat(x))
         occupancy_record.sort_values('timestamp', ignore_index=True, inplace=True)
 
         if n_lines != 100:
