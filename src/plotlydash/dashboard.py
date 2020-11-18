@@ -26,22 +26,41 @@ def init_dashboard(server):
     dash_app.index_string = html_layout
 
     device_ids = create_ID_devices_options()
+    n_lines_options = [{"label": "5", "value": 5}, {"label": "10", "value": 10}, {"label": "25", "value": 25},
+                       {"label": "50", "value": 50}, {"label": "100", "value": 100}]
     df = create_table_dataframe()
 
     # Create Layout
     dash_app.layout = html.Div(
         children=[
-            html.Label(
-                'Insira um ID de dispositivo',
-                htmlFor='device-id'
-            ),
-            dcc.Dropdown(
-                id='device-id',
-                options=[{"label": ID, "value": ID} for ID in device_ids],
-                placeholder='id',
-                searchable=False,
-                className='w-25',
-            ),
+            html.Div(children=[
+                html.Div(children=[
+                    html.Label(
+                        'Insira um ID de dispositivo',
+                        htmlFor='device-id'
+                    ),
+                    dcc.Dropdown(
+                        id='device-id',
+                        options=[{"label": ID, "value": ID} for ID in device_ids],
+                        placeholder='id',
+                        searchable=False,
+                        className='w-40',
+                    ),
+                ]),
+                html.Div(children=[
+                    html.Label(
+                        'Número de Observações',
+                        htmlFor='device-nlines'
+                    ),
+                    dcc.Dropdown(
+                        id='device-nlines',
+                        options=n_lines_options,
+                        placeholder='obs',
+                        searchable=False,
+                        className='w-40',
+                    ),
+                ])
+            ], className="d-flex w-60 justify-content-around"),
             html.Div(children=[
                 dcc.Graph(
                     id='device-graph'
@@ -91,19 +110,20 @@ def init_dashboard(server):
 
     @dash_app.callback(
         Output('device-graph', 'figure'),
-        [Input('device-id', 'value'), Input('update-graph', 'n_intervals')]
+        [Input('device-id', 'value'), Input('device-nlines', 'value'), Input('update-graph', 'n_intervals')]
     )
-    def update_graph(ID_device, n):
-        occupancy_record = create_occupancy_dataframe(ID_device)
+    def update_graph(ID_device, n_lines, n):
+        occupancy_record = create_occupancy_dataframe(ID_device, n_lines=n_lines)
 
         if ID_device:
-            fig = px.bar(occupancy_record, x='timestamp', y='occupancy',)
+            fig = px.line(occupancy_record, x='timestamp', y='occupancy', line_shape="spline")
         else:
             fig = go.Figure()
 
         fig.update_layout(xaxis_title='Data e Hora', yaxis_title=f'Número de pessoas',
                           title=dict(text='Ocupação do estabelecimento', x=0.5, font={'size': 15}))
-        fig.update_xaxes(tickangle=45)
+        fig.update_xaxes(nticks=10, showgrid=True)
+        fig.update_yaxes(showgrid=True)
 
         return fig
 
