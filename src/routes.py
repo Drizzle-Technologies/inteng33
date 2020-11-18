@@ -1,6 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash, session, jsonify
 from flask import current_app as app
-import datetime
+from datetime import datetime
+import pytz
 
 from .database.dao import add_device, delete_device, add_user, get_user_devices ,retrieve_max_people,\
                          search_by_username, validate_password, update_area, insert_occupancy, update_current_occupancy
@@ -174,7 +175,7 @@ def add_occupancy():
     # Accesses each of the information provided
     ID_device = occupancy_json['id']
     occupancy = occupancy_json['occupancy']
-    timestamp = datetime.datetime.now().isoformat()
+    timestamp = datetime.now(pytz.timezone("America/Sao_Paulo")).isoformat()
 
     # Inserts values in DeviceOccupancy and updates Device's current_occupancy column
     insert_values = (ID_device, timestamp, occupancy)

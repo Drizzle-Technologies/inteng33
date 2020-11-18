@@ -102,8 +102,6 @@ def insert_occupancy(values):
     ID = secrets.token_hex(nbytes=16)
     ID_device, timestamp, occupancy = values
 
-    timestamp = datetime.datetime.fromisoformat(timestamp)
-
     devices_occupancy = DevicesOccupancy(ID=ID, ID_device=ID_device, timestamp=timestamp, occupancy=occupancy)
 
     db.session.add(devices_occupancy)
