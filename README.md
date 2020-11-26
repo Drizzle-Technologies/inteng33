@@ -1,6 +1,6 @@
 # inteng33
 
-Web application developed for the Introduction to Electrical Engineering final project.
+Web application developed for the 'Introduction to Electrical Engineering' course final project.
 
 Link to heroku demo: https://inteng33.herokuapp.com/
 
@@ -32,7 +32,7 @@ who can create new devices, edit the area
 
 ## Arduino Integration
 
-The routes */get_max_people/<ID>* and /add_occupancy exchange data between an Arduino device.
+The routes /get_max_people/[ID] and /add_occupancy exchange data between an Arduino device.
 and the webapp. The first route gets the max number of people that can stay in the building. The second
 route receives the number of people that are in the building.
 
@@ -63,4 +63,19 @@ associated with the graph, which displays the last 100 observations of the occup
 chooses a device ID and the graph is rendered. The data table displays information of all devices. If
 an occupancy gets close to max_occupancy, the table may be painted yellow or red, 90% and 100%< of the
 max occupancy respectively.
+
+## Contributors
+
+The authors of this code are Diogo Monteiro do Amaral, Giovana Dovich Costa, João Pedro Fileti Barreto,
+Maria Eduarda Dall’Orto, and Thiago Mendes Curto. At the time of publishment, the authors were
+undergraduate students at the Universidade de São Paulo, Escola Politécnica.
+
+The authors' professors of the 'Indroduction to Electrical Engineering' course were at the time
+Prof. Eduardo Lorenzetti Pellini and Prof. Renato Machado Monaro.
+
+## Contact
+
+Feel welcomed to send an email to joao.fb@usp.br if you want further information about the code or just
+to have a chat! 
+
 
