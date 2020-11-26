@@ -9,6 +9,7 @@ class BaseConfig(object):
     SECRET_KEY = 'mandalorian'
 
 
+# Unit test configurations
 class TestConfig(BaseConfig):
     DEBUG = True
     TESTING = True
@@ -16,6 +17,7 @@ class TestConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
 
 
+# Development config
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
     try:
@@ -24,6 +26,7 @@ class DevelopmentConfig(BaseConfig):
         SQLALCHEMY_DATABASE_URI = ''
 
 
+# Production config
 class ProductionConfig(BaseConfig):
     DEBUG = False
     try:

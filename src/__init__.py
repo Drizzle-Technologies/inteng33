@@ -16,12 +16,13 @@ def init_app():
     db.init_app(app)
 
     with app.app_context():
+        # Creates database tables if they don't already exist
         db.create_all()
 
-        # Import parts of our core Flask app
+        # Import all routes of our core Flask app
         from . import routes
 
-        # Import Dash application
+        # Import Dash application and initialize it
         from .plotlydash.dashboard import init_dashboard
         app = init_dashboard(app)
 
