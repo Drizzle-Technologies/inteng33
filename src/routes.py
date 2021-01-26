@@ -3,8 +3,7 @@ from flask import current_app as app
 from datetime import datetime
 import pytz
 
-from .database.dao import add_device, delete_device, add_user, get_user_devices ,retrieve_max_people,\
-                         search_by_username, validate_password, update_area, insert_occupancy, update_current_occupancy
+from .database.dao import UserDao, DeviceDao, DeviceOccupancyDao
 
 from .helper.helper import calculate_max_people, is_not_logged_in
 
@@ -27,12 +26,12 @@ def authenticate():
     password = request.form['password']
 
     # Searching user object by the username
-    user = search_by_username(username)
+    user = UserDao.search_by_username(username)
 
     # If the user exists
     if user:
         # Checking password
-        if validate_password(user, password):
+        if UserDao.validate_password(user, password):
 
             # Creating session for the user.
             session["logged_in"] = user.ID
@@ -74,7 +73,7 @@ def dashboard():
         # User is logged in, so he can access the dashboard
 
         # Gets user's devices list to display on table
-        devices = get_user_devices(session["logged_in"])
+        devices = DeviceDao.get_user_devices(session["logged_in"])
         return render_template("dashboard.html", devices=devices, user_name=session["user_name"],
                                user_id=session["logged_in"])
 
@@ -90,7 +89,7 @@ def create_user():
 
     values = (name, username, password)
 
-    success = add_user(values)
+    success = UserDao.add_user(values)
 
     # Flashes success message
     if success:
@@ -129,7 +128,7 @@ def edit_area():
     ID = int(request.form["device_ID_editArea"])
     new_area = int(request.form["new_area"])
 
-    update_success = update_area(ID, new_area)
+    update_success = DeviceDao.update_area(ID, new_area)
 
     if update_success:
         flash("O valor da área foi atualizado.", "alert-success")
@@ -144,7 +143,7 @@ def delete():
     # Gets device's ID
     ID = request.form['device_ID_delete']
 
-    device_deleted = delete_device(ID)
+    device_deleted = DeviceDao.delete_device(ID)
     if device_deleted:
         flash("O dispositivo foi deletado", "alert-danger")
 
@@ -157,7 +156,7 @@ def get_max_people(ID):
     localhost/controladores/1) and it retrieves the maximum capacity of the building."""
 
     # Gets device's max number of people
-    max_people = retrieve_max_people(ID).max_people
+    max_people = DeviceDao.retrieve_max_people(ID).max_people
     max_dict = {'max_people': max_people}
 
     # Transforms dictionary into json and sends it
@@ -181,8 +180,8 @@ def add_occupancy():
     insert_values = (ID_device, timestamp, occupancy)
     update_values = (ID_device, occupancy)
 
-    insert_occupancy(insert_values)
-    update_current_occupancy(update_values)
+    DeviceOccupancyDao.insert_occupancy(insert_values)
+    DeviceOccupancyDao.update_current_occupancy(update_values)
 
     # Returns the json to confirm the success
     return jsonify(occupancy_json)
