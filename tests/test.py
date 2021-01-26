@@ -4,7 +4,7 @@ import json
 
 from wsgi import app
 from src import db
-from src.database.dao import add_user, add_device, insert_occupancy
+from src.database.dao import UserDao, DeviceDao, DeviceOccupancyDao
 
 
 class BaseTestCase(TestCase):
@@ -16,10 +16,10 @@ class BaseTestCase(TestCase):
 
     def setUp(self):
 
-        add_user(("test", "test", "test123"))
-        add_user(("admin", "admin", "admin123"))
-        add_device((1, 'test_shop', 100, 120))
-        insert_occupancy((1, datetime.now(), 3))
+        UserDao.add_user(("test", "test", "test123"))
+        UserDao.add_user(("admin", "admin", "admin123"))
+        DeviceDao.add_device((1, 'test_shop', 100, 120))
+        DeviceOccupancyDao.insert_occupancy((1, datetime.now(), 3))
 
     def tearDown(self):
         meta = db.metadata

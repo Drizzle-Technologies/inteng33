@@ -1,12 +1,12 @@
 import pandas as pd
 from datetime import datetime
 
-from ..database.dao import get_devices, get_ID_devices, retrieve_n_occupancy_observations
+from ..database.dao import DeviceDao, DeviceOccupancyDao
 
 
 def create_ID_devices_options():
 
-    IDs_devices, bind = get_ID_devices()
+    IDs_devices, bind = DeviceDao.get_ID_devices()
     IDs_devices = pd.read_sql(IDs_devices.statement, bind)["ID"].to_list()
     IDs_devices.sort()
 
@@ -14,7 +14,7 @@ def create_ID_devices_options():
 
 
 def create_table_dataframe():
-    devices_table, bind = get_devices()
+    devices_table, bind = DeviceDao.get_devices()
     df_devices = pd.read_sql(devices_table.statement, bind)
 
     df_devices.sort_values('ID', inplace=True, ignore_index=True)
@@ -33,7 +33,7 @@ def set_table_columns(df):
 
 def create_occupancy_dataframe(ID_device, n_lines):
 
-    occupancy_sql, bind = retrieve_n_occupancy_observations(ID_device)
+    occupancy_sql, bind = DeviceOccupancyDao.retrieve_n_occupancy_observations(ID_device)
     occupancy_record = pd.read_sql(occupancy_sql.statement, bind)
 
     n_lines = n_lines or 25
