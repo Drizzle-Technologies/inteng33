@@ -2,6 +2,8 @@
 
 Web application developed for the 'Introduction to Electrical Engineering' course final project.
 
+This versions is not up to date. Check webapp-front and webapp-apis for the current versions.
+
 Link to heroku demo: https://inteng33.herokuapp.com/
 
 ## Introduction to the Problem
